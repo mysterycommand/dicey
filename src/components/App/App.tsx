@@ -13,6 +13,7 @@ type AppAction = {
 };
 
 const { floor, random } = Math;
+
 const rollDie = (sides: number) => floor(random() * sides) + 1;
 const totalRolls = (rolls: number[]) =>
   rolls.reduce((acc, roll) => acc + roll, 0);
@@ -33,11 +34,14 @@ const clear = () => ({
   total: 0,
 });
 
+const clearRoll = (_state: AppState, payload: number) => roll(clear(), payload);
+
 const actions: {
   [action: string]: (state: AppState, payload?: any) => AppState;
 } = {
   roll,
   clear,
+  clearRoll,
 };
 
 const reducer: Reducer<AppState, AppAction> = (state, { type, payload }) =>
@@ -45,19 +49,19 @@ const reducer: Reducer<AppState, AppAction> = (state, { type, payload }) =>
 
 /**
  * MVP:
- * 1. click a "d" button and see a value immediately
- * 2. click a "d" button again and see like: "1 + 2 = 3"
- * 3. click a "clear" button and clear all values
- * 4. double-click a "d" button and do 3. then 1.
+ * 1. [x] click a "d" button and see a value immediately
+ * 2. [x] click a "d" button again and see like: "1 + 2 = 3"
+ * 3. [x] click a "clear" button and clear all values
+ * 4. [ ] double-click a "d" button and do 3. then 1.
  *
  * Nice to have:
- * 5. click a "reroll" button and reroll the existing set
- * 6. click a "save" button and store dice sets under a name (e.g. "battleaxe")
+ * 5. [ ] click a "reroll" button and reroll the existing set
+ * 6. [ ] click a "save" button and store dice sets under a name (e.g. "battleaxe")
  *
  * Someday:
- * 7. multiple users in the same "room" see the same output
- * 8. turn order/initiative
- * 9. "advantage"?
+ * 7. [ ] multiple users in the same "room" see the same output
+ * 8. [ ] turn order/initiative
+ * 9. [ ] "advantage"?
  */
 
 export const App: FC = () => {
@@ -77,6 +81,9 @@ export const App: FC = () => {
               <button
                 className="App-d-button"
                 onClick={() => dispatch({ type: 'roll', payload: sides })}
+                onDoubleClick={() =>
+                  dispatch({ type: 'clearRoll', payload: sides })
+                }
               >
                 d{sides}
               </button>
