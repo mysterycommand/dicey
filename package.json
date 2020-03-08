@@ -24,6 +24,7 @@
     ]
   },
   "dependencies": {
+    "fp-ts": "2.5.3",
     "react": "16.13.0",
     "react-dom": "16.13.0"
   },
