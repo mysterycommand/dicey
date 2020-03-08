@@ -52,7 +52,7 @@ const reducer: Reducer<AppState, AppAction> = (state, { type, payload }) =>
  * 1. [x] click a "d" button and see a value immediately
  * 2. [x] click a "d" button again and see like: "1 + 2 = 3"
  * 3. [x] click a "clear" button and clear all values
- * 4. [ ] double-click a "d" button and do 3. then 1.
+ * 4. [x] double-click a "d" button and do 3. then 1.
  *
  * Nice to have:
  * 5. [ ] click a "reroll" button and reroll the existing set
