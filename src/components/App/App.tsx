@@ -2,39 +2,46 @@ import React, { FC, useReducer, Reducer } from 'react';
 
 import './App.css';
 
-const { floor, random } = Math;
-const roll = (sides: number) => floor(random() * sides) + 1;
-
 type AppState = {
   rolls: number[];
   total: number;
 };
 
-type RollAction = {
-  type: 'roll';
-  sides: number;
+type AppAction = {
+  type: string;
+  payload?: any;
 };
 
-type AppAction = RollAction;
+const { floor, random } = Math;
+const rollDie = (sides: number) => floor(random() * sides) + 1;
+const totalRolls = (rolls: number[]) =>
+  rolls.reduce((acc, roll) => acc + roll, 0);
 
-const actions = {
-  roll: (state: AppState, sides: number) => {
-    const nextRolls = [...state.rolls, roll(sides)];
-    const nextTotal = nextRolls.reduce((acc, roll) => acc + roll, 0);
-    return {
-      rolls: nextRolls,
-      total: nextTotal,
-    };
-  },
-};
+const roll = (state: AppState, payload: number) =>
+  total({
+    ...state,
+    rolls: [...state.rolls, rollDie(payload)],
+  });
 
-const initialState: AppState = {
+const total = (state: AppState) => ({
+  ...state,
+  total: totalRolls(state.rolls),
+});
+
+const clear = () => ({
   rolls: [],
   total: 0,
+});
+
+const actions: {
+  [action: string]: (state: AppState, payload?: any) => AppState;
+} = {
+  roll,
+  clear,
 };
 
-const reducer: Reducer<AppState, AppAction> = (state, { type, sides }) =>
-  actions[type] ? actions[type](state, sides) : state;
+const reducer: Reducer<AppState, AppAction> = (state, { type, payload }) =>
+  actions[type] ? actions[type](state, payload) : state;
 
 /**
  * MVP:
@@ -54,7 +61,7 @@ const reducer: Reducer<AppState, AppAction> = (state, { type, sides }) =>
  */
 
 export const App: FC = () => {
-  const [state, dispatch] = useReducer(reducer, initialState);
+  const [state, dispatch] = useReducer(reducer, clear());
 
   return (
     <div className="App">
@@ -69,14 +76,19 @@ export const App: FC = () => {
             <li key={`d${sides}`} className="App-die">
               <button
                 className="App-d-button"
-                onClick={() => dispatch({ type: 'roll', sides })}
+                onClick={() => dispatch({ type: 'roll', payload: sides })}
               >
                 d{sides}
               </button>
             </li>
           ))}
         </ul>
-        <button className="App-clear-button">clear</button>
+        <button
+          className="App-clear-button"
+          onClick={() => dispatch({ type: 'clear' })}
+        >
+          clear
+        </button>
       </div>
     </div>
   );
