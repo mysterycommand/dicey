@@ -1,4 +1,4 @@
-import React, { FC, useReducer, Reducer } from 'react';
+import React, { FC, useRef, useReducer, Reducer } from 'react';
 
 import './App.css';
 
@@ -66,6 +66,7 @@ const reducer: Reducer<AppState, AppAction> = (state, { type, payload }) =>
 
 export const App: FC = () => {
   const [state, dispatch] = useReducer(reducer, clear());
+  const clickRef = useRef(-1);
 
   return (
     <div className="App">
@@ -80,10 +81,29 @@ export const App: FC = () => {
             <li key={`d${sides}`} className="App-die">
               <button
                 className="App-d-button"
-                onClick={() => dispatch({ type: 'roll', payload: sides })}
-                onDoubleClick={() =>
-                  dispatch({ type: 'clearRoll', payload: sides })
-                }
+                onClick={() => {
+                  console.log('click');
+
+                  if (clickRef.current !== -1) {
+                    window.clearTimeout(clickRef.current);
+                    clickRef.current = -1;
+                  }
+
+                  clickRef.current = window.setTimeout(
+                    () => dispatch({ type: 'roll', payload: sides }),
+                    200,
+                  );
+                }}
+                onDoubleClick={() => {
+                  console.log('double click');
+
+                  if (clickRef.current !== -1) {
+                    window.clearTimeout(clickRef.current);
+                    clickRef.current = -1;
+                  }
+
+                  dispatch({ type: 'clearRoll', payload: sides });
+                }}
               >
                 d{sides}
               </button>
