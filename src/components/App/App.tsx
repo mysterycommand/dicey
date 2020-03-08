@@ -1,16 +1,40 @@
-import React, { FC, useReducer } from 'react';
+import React, { FC, useReducer, Reducer } from 'react';
 
 import './App.css';
 
 const { floor, random } = Math;
 const roll = (sides: number) => floor(random() * sides) + 1;
-const actions = {
-  roll,
+
+type AppState = {
+  rolls: number[];
+  total: number;
 };
 
-const initialState = 0;
-const reducer = (state: {}, { type, sides }: { type: 'roll'; sides: number }) =>
-  actions[type] ? actions[type](sides) : state;
+type RollAction = {
+  type: 'roll';
+  sides: number;
+};
+
+type AppAction = RollAction;
+
+const actions = {
+  roll: (state: AppState, sides: number) => {
+    const nextRolls = [...state.rolls, roll(sides)];
+    const nextTotal = nextRolls.reduce((acc, roll) => acc + roll, 0);
+    return {
+      rolls: nextRolls,
+      total: nextTotal,
+    };
+  },
+};
+
+const initialState: AppState = {
+  rolls: [],
+  total: 0,
+};
+
+const reducer: Reducer<AppState, AppAction> = (state, { type, sides }) =>
+  actions[type] ? actions[type](state, sides) : state;
 
 /**
  * MVP:
@@ -34,7 +58,11 @@ export const App: FC = () => {
 
   return (
     <div className="App">
-      <h1 className="App-value">{state}</h1>
+      <h1 className="App-value">
+        {state.rolls.length > 1
+          ? `${state.rolls.join(' + ')} = ${state.total}`
+          : state.total}
+      </h1>
       <div className="App-controls">
         <ul className="App-dice">
           {[20, 12, 10, 8, 6, 4].map(sides => (
