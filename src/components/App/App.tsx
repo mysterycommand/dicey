@@ -12,6 +12,22 @@ const initialState = 0;
 const reducer = (state: {}, { type, sides }: { type: 'roll'; sides: number }) =>
   actions[type] ? actions[type](sides) : state;
 
+/**
+ * MVP:
+ * 1. click a "d" button and see a value immediately
+ * 2. click a "d" button again and see like: "1 + 2 = 3"
+ * 3. click a "clear" button and clear all values
+ * 4. double-click a "d" button and do 3. then 1.
+ *
+ * Nice to have:
+ * 5. click a "reroll" button and reroll the existing set
+ * 6. click a "save" button and store dice sets under a name (e.g. "battleaxe")
+ *
+ * Someday:
+ * 7. multiple users in the same "room" see the same output
+ * 8. turn order/initiative
+ */
+
 export const App: FC = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
