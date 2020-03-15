@@ -5,9 +5,12 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
+    "predeploy": "yarn build",
+    "deploy": "gh-pages -d build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
+  "homepage": "https://mysterycommand.com/dicey",
   "eslintConfig": {
     "extends": "react-app"
   },
@@ -36,6 +39,7 @@
     "@types/node": "13.9.0",
     "@types/react": "16.9.23",
     "@types/react-dom": "16.9.5",
+    "gh-pages": "2.2.0",
     "prettier": "1.19.1",
     "react-scripts": "3.4.0",
     "typescript": "3.8.3"
