@@ -22,49 +22,63 @@ type AppAction = {
 //   [Symbol.iterator]: () => IterableIterator<T>;
 // };
 
-// type Tail<T extends any[]> = ((...args: T) => any) extends (
-//   _: any,
-//   ...tail: infer U
-// ) => any
-//   ? U
-//   : [];
+type Tail<T extends any[]> = ((...args: T) => any) extends (
+  _: any,
+  ...tail: infer U
+) => any
+  ? U
+  : [];
 
-// type Length<T extends any[]> = T['length'];
+type Length<T extends any[]> = T['length'];
 
-// type Prepend<E, T extends any[]> = ((head: E, ...args: T) => any) extends (
-//   ...args: infer U
-// ) => any
-//   ? U
-//   : T;
+type Prepend<E, T extends any[]> = ((head: E, ...args: T) => any) extends (
+  ...args: infer U
+) => any
+  ? U
+  : T;
 
-// type Drop<N extends number, T extends any[], I extends any[] = []> = {
-//   0: Drop<N, Tail<T>, Prepend<any, I>>;
-//   1: T;
-// }[Length<I> extends N ? 1 : 0];
+type Drop<N extends number, T extends any[], I extends any[] = []> = {
+  0: Drop<N, Tail<T>, Prepend<any, I>>;
+  1: T;
+}[Length<I> extends N ? 1 : 0];
 
 type Cast<X, Y> = X extends Y ? X : Y;
 
-// type Curried<P extends any[], R> = <T extends any[]>(
-//   ...args: Cast<T, Partial<P>>
-// ) => Drop<Length<T>, P> extends [any, ...any[]]
-//   ? Curried<Cast<Drop<Length<T>, P>, any[]>, R>
-//   : R;
+// prettier-ignore
+type Curried<P extends any[], R> = <T extends any[]>(
+  ...args: Cast<T, Partial<P>>
+) => Drop<Length<T>, P> extends [any, ...any[]]
+  // @ts-ignore
+  ? Curried<Cast<Drop<Length<T>, P>, any[]>, R>
+  : R;
 
-// type Curried<F extends (...args: any) => any> = <T extends any[]>(
-//   ...args: Cast<Cast<T, Parameters<F>>, any[]>
-// ) => Parameters<F> extends [any, ...any[]]
-//   ? Curried<(...args: Cast<Parameters<F>, any[]>) => ReturnType<F>>
-//   : ReturnType<F>;
+// prettier-ignore
+type Curry = <F extends (...args: any) => any, T extends any[]>(
+  f: F,
+  ...args: T
+  // @ts-ignore
+) => Curried<Drop<Length<T>, Parameters<F>>, ReturnType<F>>;
 
-type F = (...args: any) => any;
-const curry = (f: F, ...a: any[]) =>
+const curry: Curry = (f, ...a) =>
   f.length > a.length ? (...b: any[]) => curry(f, ...a.concat(b)) : f(...a);
+
 const add = (a: number, b: number) => a + b;
 
-const curriedAdd /* : Curried<typeof add> */ = curry(add);
-console.log(curriedAdd(1)(2));
-console.log(curriedAdd(3, 4));
-console.log(curriedAdd(5));
+const curriedAdd = curry(add);
+const curriedAdd1 = curriedAdd(1);
+const curriedAdd2 = curry(add, 2);
+
+console.log(curriedAdd(1)(2)(10));
+console.log(curriedAdd(3, 4, 10));
+
+console.log(curriedAdd1(9)(10));
+console.log(curriedAdd1(9, 10));
+
+console.log(curriedAdd2(1)(10));
+console.log(curriedAdd2(2, 10));
+
+console.log(curry(add, 3)(4)(10));
+console.log(curry(add, 5, 6, 10));
 
 const { floor, random } = Math;
 
@@ -131,7 +145,7 @@ export const App: FC = () => {
       </h1>
       <div className="App-controls">
         <ul className="App-dice">
-          {[20, 12, 10, 8, 6, 4].map(sides => (
+          {[20, 12, 10, 8, 6, 4].map((sides) => (
             <li key={`d${sides}`} className="App-die">
               <button
                 className="App-d-button"
