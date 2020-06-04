@@ -1,0 +1,50 @@
+.App,
+.App-value,
+.App-controls,
+.App-dice,
+.App-die {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.App {
+  width: 100%;
+  height: 100%;
+
+  background-color: #222222;
+  color: #dddddd;
+
+  flex-direction: column;
+}
+
+.App-value {
+  font-size: 8rem;
+  flex: 1 1 100%;
+}
+
+.App-controls {
+  margin-bottom: 4rem;
+  position: relative;
+}
+
+.App-dice {
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+}
+
+.App-d-button {
+  font-size: 2rem;
+  border: 0;
+  background: #dddddd;
+}
+
+.App-clear-button {
+  font-size: 1rem;
+  border: 0;
+  background: transparent;
+  color: #dddddd;
+  position: absolute;
+  right: -4rem;
+}
